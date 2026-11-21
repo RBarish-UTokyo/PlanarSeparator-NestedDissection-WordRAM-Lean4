@@ -1,0 +1,21 @@
+{
+  "challenge_module": "PlanarSeparatorChallenge",
+  "solution_module": "PlanarSeparatorSolution",
+  "theorem_names": [
+    "PlanarSeparator.separator_theorem",
+    "PlanarSeparator.separator_theorem_induced",
+    "PlanarSeparator.sepTree_exists",
+    "PlanarSeparator.square_sepTree_exists",
+    "PlanarSeparator.fill_bound",
+    "PlanarSeparator.planar_nested_dissection",
+    "PlanarSeparator.square_nested_dissection",
+    "PlanarSeparator.separator_machine"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
+  "enable_nanoda": true
+}

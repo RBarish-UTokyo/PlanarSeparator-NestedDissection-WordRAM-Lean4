@@ -1,0 +1,35 @@
+name = "PlanarSeparatorND"
+defaultTargets = ["WordRAM", "Kasteleyn", "NestedDissection", "PlanarSeparator", "PlanarSeparatorChallenge", "PlanarSeparatorSolution", "Audit"]
+
+[leanOptions]
+autoImplicit = false
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "065356127b1dc0016f66b7283ce0ce2c4055aa55"
+
+# The libraries.
+[[lean_lib]]
+name = "WordRAM"
+
+[[lean_lib]]
+name = "Kasteleyn"
+
+[[lean_lib]]
+name = "NestedDissection"
+
+[[lean_lib]]
+name = "PlanarSeparator"
+
+# The submission: the Challenge module states the compared theorems (it imports only Mathlib), and
+# the Solution module proves them from the libraries.
+[[lean_lib]]
+name = "PlanarSeparatorChallenge"
+
+[[lean_lib]]
+name = "PlanarSeparatorSolution"
+
+# Prints the axioms of the compared theorems and of further theorems of the libraries.
+[[lean_lib]]
+name = "Audit"

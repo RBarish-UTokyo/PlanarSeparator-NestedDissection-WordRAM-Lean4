@@ -1,0 +1,245 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# Submission "Planar separators and nested dissection": Challenge PlanarSeparatorChallenge.lean,
+# Solution PlanarSeparatorSolution.lean, comparator configuration comparator.json
+# (paths relative to the repository root).
+version: "v0.4"
+
+project:
+  name: "The planar separator theorem and nested dissection, with a linear-time separator program on a word RAM, in Lean 4"
+  description: >-
+    A Lean 4 and Mathlib formalization of the planar separator theorem of Lipton
+    and Tarjan and of nested dissection. A plane graph is a Mathlib simple graph
+    on a finite vertex type with a rotation system (a permutation of the darts
+    cycling the darts at each vertex) such that the graph is connected and
+    Euler's formula |V| + |F| = |E| + 2 holds for the set F of faces (so it has
+    at least one edge: faces are cycles of darts, and the one-vertex graph has
+    none). Eight theorems are compared: (1) the separator theorem with constant
+    6: for nonnegative vertex weights of total at most 1, a set of at most 6
+    sqrt(n) vertices splits the n vertices into two parts with no edge between
+    them, each of weight at most 2/3; (2) the same for every set U of vertices,
+    with at most 6 sqrt(|U|) vertices of U; (3) every plane graph has a
+    separator tree covering all vertices in which every subtree with k vertices
+    has a separator (or leaf set) and a boundary of at most 50000 sqrt(k)
+    vertices each and parts of at most 2k/3 vertices; (4) the same for the
+    square of a plane graph of maximum degree at most D, with 40 (1062 (D + 1)^2
+    + 1) in place of 50000; (5) for any separator tree with constants alpha and
+    beta, the filled graph of elimination in its nested dissection order has at
+    most alpha (alpha + beta) n (1 + log_{3/2} n) edges; (6), (7) for every
+    plane graph, and for the square of every plane graph of maximum degree at
+    most D, there are a separator tree covering all vertices and the permutation
+    listing its nested dissection order such that the filled graph of that order
+    has at most 2 T^2 n (1 + log_{3/2} n) edges (T as in (3) and (4)), and, for
+    every matrix over a field whose off-diagonal nonzero entries are edges of
+    the graph, permuted into that order, elimination restricted to the filled
+    graph computes exactly the matrix after the n in-place elimination steps
+    M_ij - M_ik M_kk^(-1) M_kj, with at most 48 T^3 n^(3/2) ring operations
+    counted in a writer monad that charges every addition, subtraction,
+    negation, multiplication and inversion of the explicit algorithm; the
+    inverse is Lean's totalized field inverse (0^(-1) = 0), so these steps are
+    Gaussian elimination without pivoting when the pivots are nonzero and leave
+    the matrix unchanged at a zero pivot; (8) one fixed program for an explicit
+    word RAM (unit cost per instruction, natural registers and memory cells
+    bounded by W along the run) prints, for a plane graph with n vertices, m
+    darts and natural vertex weights, a separator of at most 6 sqrt(n) + 3
+    vertices whose two parts each weigh at most 2/3 of the total, within 320m +
+    191n + 403 steps for word bounds at least 16m + 12n + 3 (total weight) + 22.
+    The proofs use only the axioms propext, Classical.choice and Quot.sound.
+  authors:
+    - "Robert D. Barish"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Robert D. Barish"
+
+classification:
+  arxiv: [math.CO, cs.DS]
+  msc2020: [05C10, 05C85, 65F05, 65F50, 68Q25, 68W40]
+
+sources:
+  - title: "A separator theorem for planar graphs"
+    authors:
+      - "R. J. Lipton"
+      - "R. E. Tarjan"
+    type: paper
+    location: "SIAM Journal on Applied Mathematics 36 (1979), 177-189"
+    relationship: adapts
+    note: >-
+      The planar separator theorem and its linear-time algorithm. Formalized as
+      PlanarSeparator.separator_theorem and
+      PlanarSeparator.separator_theorem_induced with the constant 6 (the article
+      proves 2 sqrt(2) sqrt(n)), and on the machine as
+      PlanarSeparator.separator_machine. The proof follows the article's
+      levels-and-cycle argument with two simplifications: the faces are
+      triangulated by a vertex in each face (the stellar subdivision of the
+      rotation system) instead of chords, and the inner levels are not
+      contracted; only the vertices of the separating root paths inside the
+      middle levels are put in the separator.
+  - title: "Generalized nested dissection"
+    authors:
+      - "R. J. Lipton"
+      - "D. J. Rose"
+      - "R. E. Tarjan"
+    type: paper
+    location: "SIAM Journal on Numerical Analysis 16 (1979), 346-358"
+    relationship: adapts
+    note: >-
+      Separator trees with boundary bounds for graphs with sqrt(n)-separators,
+      the O(n log n) fill and O(n^(3/2)) operation count of nested dissection.
+      Formalized as PlanarSeparator.sepTree_exists, PlanarSeparator.fill_bound
+      and PlanarSeparator.planar_nested_dissection.
+      PlanarSeparator.square_sepTree_exists and
+      PlanarSeparator.square_nested_dissection apply the same framework to
+      squares of plane graphs of bounded degree; their separators are derived
+      here from the separator theorem (PlanarSeparator/Square.lean: separate the
+      closed neighbourhood of a vertex set in the graph and add to the separator
+      the vertices of the set adjacent to it). The constants (50000 for plane
+      graphs) are those of the formal proof.
+  - title: "Nested dissection of a regular finite element mesh"
+    authors:
+      - "A. George"
+    type: paper
+    location: "SIAM Journal on Numerical Analysis 10 (1973), 345-363"
+    relationship: background
+    note: "Nested dissection for the regular grid; the order and the fill analysis generalized by Lipton, Rose and Tarjan."
+  - title: "Algorithmic aspects of vertex elimination on graphs"
+    authors:
+      - "D. J. Rose"
+      - "R. E. Tarjan"
+      - "G. S. Lueker"
+    type: paper
+    location: "SIAM Journal on Computing 5 (1976), 266-283"
+    relationship: formalizes
+    note: >-
+      The path characterization of the filled graph, used as the definition of
+      NestedDissection.fill; its equality with the graph of the elimination game
+      is proved (NestedDissection.game_adj_iff_fill,
+      NestedDissection/Fill.lean).
+  - title: "Graphs on Surfaces"
+    authors:
+      - "B. Mohar"
+      - "C. Thomassen"
+    type: book
+    location: "Johns Hopkins University Press, Baltimore (2001), Sections 3.2 and 4.1"
+    relationship: background
+    note: >-
+      Rotation systems as combinatorial embeddings, and Euler's formula
+      characterizing the sphere. This correspondence is not formalized; plane
+      graphs are defined as rotation systems of connected graphs satisfying
+      Euler's formula.
+
+related_formalizations: []
+
+status:
+  scope: >-
+    Proved: the eight theorems stated in PlanarSeparatorChallenge.lean
+    (PlanarSeparator.separator_theorem, separator_theorem_induced,
+    sepTree_exists, square_sepTree_exists, fill_bound, planar_nested_dissection,
+    square_nested_dissection, separator_machine), proved in
+    PlanarSeparatorSolution.lean (from PlanarSeparator/Main.lean) and compared
+    by lake comparator with comparator.json. The libraries
+    PlanarSeparator and NestedDissection of this repository also prove the
+    equality of the filled graph with the elimination game
+    (NestedDissection/Fill.lean) and nonzero pivots of positive definite
+    matrices (NestedDissection/PosDef.lean). Not formalized: the correspondence
+    between rotation systems and topological embeddings in the plane; the
+    computation of the filled pattern itself (it is a hypothesis of the
+    elimination statements, not charged).
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: [propext, Classical.choice, Quot.sound]
+
+automation:
+  methods:
+    - method: agent
+      models: ["claude-opus-5-5"]
+      framework: "claude.ai"
+      tool_setup: >-
+        Claude Opus 5.5 (Anthropic) was used, as agents under the direction of
+        the author, for the Lean formalization and the documentation. The author
+        set the task, the target statements and the requirements. Tools: Lean
+        v4.35.0-rc2 and Lake, Mathlib, the toolchain's lake comparator and
+        independent kernels.
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "not tracked"
+        hardware: "cloud container"
+      prompting_notes: "n/a"
+  spend_usd: "not tracked"
+
+fidelity:
+  divergences: >-
+    (1) Plane graphs are rotation systems of connected simple graphs satisfying
+    Euler's formula |V| + |F| = |E| + 2, not drawings; that these are exactly
+    the plane embeddings is classical and not formalized. In particular the
+    statements about plane graphs are about connected graphs with at least one
+    edge: faces are cycles of darts, so the one-vertex graph has no faces and is
+    not plane here. The theorems of Lipton, Rose and Tarjan hold for all planar
+    graphs; the disconnected case, which follows by joining the components with
+    extra edges (a separation of the larger graph is one of the original), is
+    not formalized. (2) The separator constant is 6 and the separator-tree
+    constants are 50000 and 40 (1062 (D + 1)^2 + 1) for squares of graphs of
+    maximum degree D; they are not optimized. (3) Operation counts are in the
+    arithmetic model: the algorithms are written in a writer monad and the count
+    is the number of ring operations performed through its charged primitives
+    (an inversion counts as one multiplication; data movement is free); the
+    statements are about the explicit algorithm NestedDissection.sparseCounted,
+    whose definition is part of the statement. (4) The elimination is written in
+    place (NestedDissection.stage) with Lean's field inverse, which is totalized
+    by 0^(-1) = 0. When all pivots met are nonzero (for instance when all
+    leading principal minors are nonzero, in particular for positive definite
+    matrices), it is Gaussian elimination without pivoting; at a zero pivot,
+    where elimination without pivoting is undefined (for example the first pivot
+    of [[0, 1], [1, 0]]), the totalized step leaves the matrix unchanged. The
+    elimination statements hold for every matrix over a field with the given
+    pattern in this totalized sense. (5) The filled graph is given to the
+    algorithm as a hypothesis H = fill ...; computing it is not charged. (6) The
+    machine statement is about one explicit machine (unit cost per instruction,
+    natural words bounded by W along the run) and a fixed input encoding; the
+    program is existentially quantified. The separator program requires the
+    darts to be numbered so that the darts leaving lower vertices come first.
+
+review:
+  status: "unreviewed"
+  reviewers: []
+  notes: >-
+    No claims beyond the verification report for the submitted commit. The
+    proofs have not been reviewed by a person.
+
+alignment:
+  namespace: "PlanarSeparator"
+  statements:
+    - source: "Lipton-Tarjan 1979: the planar separator theorem, weighted form"
+      lean: "PlanarSeparator.separator_theorem"
+      module: "PlanarSeparatorSolution"
+      status: proved
+    - source: "Lipton-Tarjan 1979: separators for every set of vertices (induced subgraphs) of a planar graph"
+      lean: "PlanarSeparator.separator_theorem_induced"
+      module: "PlanarSeparatorSolution"
+      status: proved
+    - source: "Lipton-Rose-Tarjan 1979: separator trees with boundary bounds for planar graphs"
+      lean: "PlanarSeparator.sepTree_exists"
+      module: "PlanarSeparatorSolution"
+      status: proved
+    - source: "Separator trees for squares of planar graphs of bounded degree (derived here from Lipton-Tarjan 1979)"
+      lean: "PlanarSeparator.square_sepTree_exists"
+      module: "PlanarSeparatorSolution"
+      status: proved
+    - source: "Lipton-Rose-Tarjan 1979: O(n log n) fill of nested dissection"
+      lean: "PlanarSeparator.fill_bound"
+      module: "PlanarSeparatorSolution"
+      status: proved
+    - source: "Lipton-Rose-Tarjan 1979: nested dissection of planar graphs in O(n^(3/2)) operations"
+      lean: "PlanarSeparator.planar_nested_dissection"
+      module: "PlanarSeparatorSolution"
+      status: proved
+    - source: "Nested dissection for squares of planar graphs of bounded degree in O(n^(3/2)) operations (Lipton-Rose-Tarjan 1979 applied to the derived separators)"
+      lean: "PlanarSeparator.square_nested_dissection"
+      module: "PlanarSeparatorSolution"
+      status: proved
+    - source: "Lipton-Tarjan 1979: the planar separator in linear time on the machine"
+      lean: "PlanarSeparator.separator_machine"
+      module: "PlanarSeparatorSolution"
+      status: proved
+
+acknowledgements: >-
+  Mathlib and the Lean community; the Lean toolchain's lake comparator and
+  independent kernels.
