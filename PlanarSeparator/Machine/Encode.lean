@@ -2,6 +2,7 @@ module
 
 public import PlanarSeparator.Machine.Top
 public import Mathlib.Data.List.GetD
+public import WordRAM.Machine.IsWord
 
 /-!
 # The input `sepInput` of the specification
@@ -146,7 +147,8 @@ theorem sepInput_le {W : ℕ} (hW : 16 * m + 12 * n + 3 * ∑ v, w v + 22 ≤ W)
 
 /-- **The target `SeparatorMachine`.** -/
 theorem separatorMachine_holds : SeparatorMachine := by
-  refine ⟨compile sepProg 0 ++ [Instr.halt], ?_⟩
+  refine ⟨compile sepProg 0 ++ [Instr.halt],
+    Stmt.isWord_compile_halt (by kernel_rfl), ?_⟩
   intro n m G _ R hR w di hdi W hW
   have hE := enc_sepInput R w di hdi
   have hIn := inHolds_sepInput R w di

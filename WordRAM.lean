@@ -3,6 +3,7 @@ module
 public import WordRAM.Algebraic
 public import WordRAM.AlgebraicSpec
 public import WordRAM.Machine.Basic
+public import WordRAM.Machine.IsWord
 public import WordRAM.Machine.Iter
 public import WordRAM.Machine.KernelRfl
 public import WordRAM.Machine.RealsModNat

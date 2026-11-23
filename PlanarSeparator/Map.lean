@@ -15,7 +15,7 @@ constructions on maps used below (the stellar subdivision of a map adds an edge 
 of a face to each corner of the face).
 
 A map is *plane* if every vertex carries a dart, the darts are connected through `σ` and `α`, and
-Euler's formula `V + F = E + 2` holds. Every plane rotation system of a simple graph defines a
+Euler's formula `|V| + |F| = |E| + 2` holds. Every plane rotation system of a simple graph defines a
 plane map (`PlanarSeparator.Map.ofRotation`).
 
 ## Main definitions
@@ -221,7 +221,7 @@ structure IsTriangle (δ : D) : Prop where
 variable [Fintype P] [DecidableEq P]
 
 /-- A map is *plane* if every vertex carries a dart, the darts are connected, and Euler's formula
-`V + F = E + 2` holds. -/
+`|V| + |F| = |E| + 2` holds. -/
 structure IsPlane : Prop where
   exists_dart : ∀ v : P, ∃ d : D, M.vert d = v
   connected : M.Connected

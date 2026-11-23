@@ -41,9 +41,10 @@ states:
   `O(n ^ (3/2))` arithmetic operations counted in the monad `WordRAM.Algebraic.Counted`; `stage`
   is Gaussian elimination without pivoting when its pivots are nonzero, and uses the totalized
   inverse `0⁻¹ = 0` otherwise (a step at a zero pivot leaves the matrix unchanged);
-* `PlanarSeparator.separator_machine`: one program for the word RAM `WordRAM` prints a separator
-  of at most `6 √n + 3` vertices of a plane graph with `n` vertices and `m` darts, with both parts
-  of weight at most `2/3`, in at most `320 m + 191 n + 403` steps.
+* `PlanarSeparator.separator_machine`: one word program for the word RAM `WordRAM` (no real
+  instruction, `WordRAM.Program.IsWord`, so every run uses only natural words, all at most the
+  bound `W`) prints a separator of at most `6 √n + 3` vertices of a plane graph with `n` vertices
+  and `m` darts, with both parts of weight at most `2/3`, in at most `320 m + 191 n + 403` steps.
 
 The separator theorem and its linear-time algorithm are from
 
@@ -139,6 +140,17 @@ inductive Instr : Type
 
 /-- A program is a finite list of instructions; instruction addresses are list positions. -/
 abbrev Program : Type := List Instr
+
+/-- A real instruction: one that reads or writes a real register or a real memory cell, or
+compares two real registers. -/
+def Instr.isReal : Instr → Bool
+  | .constR .. | .copyR .. | .addR .. | .subR .. | .mulR .. | .divR .. | .loadR .. | .storeR ..
+  | .brLtR .. => true
+  | _ => false
+
+/-- A word program: it contains no real instruction, so its runs touch only the natural
+registers and natural memory. -/
+def Program.IsWord (prog : Program) : Prop := ∀ i ∈ prog, i.isReal = false
 
 /-- A machine configuration. -/
 structure Config where
@@ -386,7 +398,7 @@ instance : Fintype M.Face :=
   @Quotient.fintype _ _ _ (Equiv.Perm.instDecidableRelSameCycle M.faceNext)
 
 /-- A rotation system is *plane* (of genus zero) if the graph is connected and Euler's formula
-`V - E + F = 2` holds.
+`|V| + |F| = |E| + 2` holds, `F` the set of faces.
 
 Faces are the cycles of the face permutation on the darts, so a graph without edges has no
 faces here. A connected graph without edges is a single vertex; it is not plane in this sense
@@ -764,18 +776,20 @@ def sepInput {n m : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
         [((di.symm i).fst : ℕ), (di (di.symm i).symm : ℕ), (di (R.rot (di.symm i)) : ℕ)]),
     fun _ => 0⟩
 
-/-- **The planar separator theorem on the machine in linear time.** One fixed program for the
-machine `WordRAM`, run on the input `sepInput R w di` of a plane rotation system `R` of a graph on
-`Fin n` with `m` darts, vertex weights `w` and a numbering `di` of the darts in which the darts
-leaving lower vertices come first, with words of at least `16 m + 12 n + 3 Σ w + 22`, halts
-within `320 m + 191 n + 403` steps and prints a list of words; reading word `v` of the list for
-each vertex `v` (`0` if the list is shorter), the vertices read as `0` form a set `S` of at most
-`6 √n + 3` vertices separating those read as `1` from those read as `2`, and each of these two
-parts weighs at most `2/3` of the total.
+/-- **The planar separator theorem on the machine in linear time.** One fixed word program for the
+machine `WordRAM` (no real instruction, `WordRAM.Program.IsWord`), run on the input
+`sepInput R w di` of a plane rotation system `R` of a graph on `Fin n` with `m` darts, vertex
+weights `w` and a numbering `di` of the darts in which the darts leaving lower vertices come
+first, with words of at least `16 m + 12 n + 3 Σ w + 22`, halts within `320 m + 191 n + 403` steps
+and prints a list of words; reading word `v` of the list for each vertex `v` (`0` if the list is
+shorter), the vertices read as `0` form a set `S` of at most `6 √n + 3` vertices separating those
+read as `1` from those read as `2`, and each of these two parts weighs at most `2/3` of the
+total.
 
 As `IsPlane` requires, `G` is connected and has at least one edge. -/
 def SeparatorMachine : Prop :=
-  ∃ prog : WordRAM.Program, ∀ {n m : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+  ∃ prog : WordRAM.Program, WordRAM.Program.IsWord prog ∧
+    ∀ {n m : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     (R : Kasteleyn.RotationSystem G), R.IsPlane → ∀ (w : Fin n → ℕ) (di : G.Dart ≃ Fin m),
     (∀ d d' : G.Dart, d.fst < d'.fst → di d < di d') → ∀ W : ℕ,
     16 * m + 12 * n + 3 * ∑ v, w v + 22 ≤ W →

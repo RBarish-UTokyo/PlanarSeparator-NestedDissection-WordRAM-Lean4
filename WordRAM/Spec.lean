@@ -20,6 +20,11 @@ Everything else is unchanged: natural registers and memory, exact real registers
 program counter, unit cost per executed instruction (`RunsWithin` charges one step per
 instruction and one for the final `halt`), and a bound `W` on every natural word along the run
 (`WordsBounded`), which a cost theorem states explicitly.
+
+The real registers and real memory are exact and unbounded, so a program using them is not a
+word-RAM program. `Instr.isReal` marks the instructions that read, write or compare reals, and
+`Program.IsWord prog` says that `prog` contains none of them: its runs use only the natural
+registers and memory, whose words `RunsWithin` bounds by `W`.
 -/
 
 @[expose] public section
@@ -89,6 +94,17 @@ inductive Instr : Type
 
 /-- A program is a finite list of instructions; instruction addresses are list positions. -/
 abbrev Program : Type := List Instr
+
+/-- A real instruction: one that reads or writes a real register or a real memory cell, or
+compares two real registers. -/
+def Instr.isReal : Instr → Bool
+  | .constR .. | .copyR .. | .addR .. | .subR .. | .mulR .. | .divR .. | .loadR .. | .storeR ..
+  | .brLtR .. => true
+  | _ => false
+
+/-- A word program: it contains no real instruction, so its runs touch only the natural
+registers and natural memory. -/
+def Program.IsWord (prog : Program) : Prop := ∀ i ∈ prog, i.isReal = false
 
 /-- A machine configuration. -/
 structure Config where

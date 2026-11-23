@@ -25,7 +25,7 @@ targets with `sorry`.
 
 * Rotation systems (`RotationSystem`), the face permutation (`RotationSystem.faceNext`), faces
   (`RotationSystem.Face`, `RotationSystem.face`) and plane rotation systems
-  (`RotationSystem.IsPlane`: connected, with Euler's formula `V + F = E + 2`).
+  (`RotationSystem.IsPlane`: connected, with Euler's formula `|V| + |F| = |E| + 2`).
 * Orientations (`IsOrientation`), clockwise edges of a face (`RotationSystem.cwCount`) and
   Kasteleyn orientations (`RotationSystem.IsKasteleyn`).
 * The Pfaffian (`pf`, by expansion along the first row), perfect matchings
@@ -104,7 +104,7 @@ instance : Fintype M.Face :=
   @Quotient.fintype _ _ _ (Equiv.Perm.instDecidableRelSameCycle M.faceNext)
 
 /-- A rotation system is *plane* (of genus zero) if the graph is connected and Euler's formula
-`V - E + F = 2` holds.
+`|V| + |F| = |E| + 2` holds, `F` the set of faces.
 
 Faces are the cycles of the face permutation on the darts, so a graph without edges has no
 faces here. A connected graph without edges is a single vertex; it is not plane in this sense
@@ -330,16 +330,16 @@ def MatchingCount : Prop :=
         pf (signedAdj o (fun _ => (1 : ℤ))) = -#(graphPerfectMatchings G)) ∧
       (signedAdj o (fun _ => (1 : ℤ))).det = (#(graphPerfectMatchings G) : ℤ) ^ 2
 
-/-- **A Kasteleyn orientation in linear time.** There is one fixed program for the machine
-`WordRAM` such that, for every rotation system of a connected graph with at least one edge, with
-`F` faces and `S` darts, every
-numbering `eF` of the faces, every numbering `eD` of the darts and every root face `f₀`, the
+/-- **A Kasteleyn orientation in linear time.** There is one fixed word program for the machine
+`WordRAM` (no real instruction, `WordRAM.Program.IsWord`) such that, for every rotation system of
+a connected graph with at least one edge, with `F` faces and `S` darts, every numbering `eF` of
+the faces, every numbering `eD` of the darts and every root face `f₀`, the
 encoding `Orient.rotEnc M eF eD f₀` has `4 + F + 3 S` words, and the program run on it halts
 within `36 F + 39 S + 27` steps, with every natural word at most `Orient.rotW M = 4 F + 5 S + 8`,
 and prints `S` words; reading the word in the slot of each dart (`1` meaning forward) gives a
 Kasteleyn orientation with respect to `f₀`. -/
 def LinearTimeOrientation : Prop :=
-  ∃ prog : WordRAM.Program,
+  ∃ prog : WordRAM.Program, WordRAM.Program.IsWord prog ∧
     ∀ {V : Type u} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
       (M : RotationSystem G) (eF : M.Face ≃ Fin (Fintype.card M.Face))
       (eD : G.Dart ≃ Fin (Fintype.card G.Dart)), G.Connected → G.edgeFinset.Nonempty →

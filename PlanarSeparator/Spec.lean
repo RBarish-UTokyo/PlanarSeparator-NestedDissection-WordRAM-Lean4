@@ -207,18 +207,20 @@ def sepInput {n m : ℕ} {G : SimpleGraph (Fin n)} [DecidableRel G.Adj]
         [((di.symm i).fst : ℕ), (di (di.symm i).symm : ℕ), (di (R.rot (di.symm i)) : ℕ)]),
     fun _ => 0⟩
 
-/-- **The planar separator theorem on the machine in linear time.** One fixed program for the
-machine `WordRAM`, run on the input `sepInput R w di` of a plane rotation system `R` of a graph on
-`Fin n` with `m` darts, vertex weights `w` and a numbering `di` of the darts in which the darts
-leaving lower vertices come first, with words of at least `16 m + 12 n + 3 Σ w + 22`, halts
-within `320 m + 191 n + 403` steps and prints a list of words; reading word `v` of the list for
-each vertex `v` (`0` if the list is shorter), the vertices read as `0` form a set `S` of at most
-`6 √n + 3` vertices separating those read as `1` from those read as `2`, and each of these two
-parts weighs at most `2/3` of the total.
+/-- **The planar separator theorem on the machine in linear time.** One fixed word program for the
+machine `WordRAM` (no real instruction, `WordRAM.Program.IsWord`), run on the input
+`sepInput R w di` of a plane rotation system `R` of a graph on `Fin n` with `m` darts, vertex
+weights `w` and a numbering `di` of the darts in which the darts leaving lower vertices come
+first, with words of at least `16 m + 12 n + 3 Σ w + 22`, halts within `320 m + 191 n + 403` steps
+and prints a list of words; reading word `v` of the list for each vertex `v` (`0` if the list is
+shorter), the vertices read as `0` form a set `S` of at most `6 √n + 3` vertices separating those
+read as `1` from those read as `2`, and each of these two parts weighs at most `2/3` of the
+total.
 
 As `IsPlane` requires, `G` is connected and has at least one edge. -/
 def SeparatorMachine : Prop :=
-  ∃ prog : WordRAM.Program, ∀ {n m : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
+  ∃ prog : WordRAM.Program, WordRAM.Program.IsWord prog ∧
+    ∀ {n m : ℕ} (G : SimpleGraph (Fin n)) [DecidableRel G.Adj]
     (R : Kasteleyn.RotationSystem G), R.IsPlane → ∀ (w : Fin n → ℕ) (di : G.Dart ≃ Fin m),
     (∀ d d' : G.Dart, d.fst < d'.fst → di d < di d') → ∀ W : ℕ,
     16 * m + 12 * n + 3 * ∑ v, w v + 22 ≤ W →

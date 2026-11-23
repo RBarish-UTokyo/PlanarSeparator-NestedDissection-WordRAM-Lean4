@@ -17,9 +17,10 @@ with the compared theorems proved by `sorry`. The Solution module imports the li
 repository, never the Challenge. The configuration permits exactly the axioms `propext`,
 `Quot.sound` and `Classical.choice`, compares no definitions separately (`definition_names` is
 empty) and enables nanoda. The definitions in the Challenge are copies of the specification modules
-of the libraries (`Kasteleyn/Spec.lean`, `NestedDissection/Spec.lean`, `PlanarSeparator/Spec.lean`,
-`WordRAM/AlgebraicSpec.lean`, `WordRAM/Spec.lean`); the comparator checks that every constant used
-by the compared statements is the same kernel constant in the Solution's environment.
+`WordRAM/Spec.lean`, `WordRAM/AlgebraicSpec.lean`, `Kasteleyn/Spec.lean`,
+`NestedDissection/Spec.lean`, `PlanarSeparator/Spec.lean` (the declarations the statements use); the
+comparator checks that every constant used by the compared statements is the same kernel constant in
+the Solution's environment.
 
 ## Statement
 
@@ -37,8 +38,10 @@ reals; and appending a natural register to the output. Every instruction costs o
 `prog` executes some number `k` of instructions without fault and then stands at a `halt`
 instruction, `k + 1 ≤ T` (the final `halt` is charged one step), every configuration along the run
 (the last one included) has all natural registers and all natural memory cells at most `W`, and the
-output at the end is `out`. Real registers are not bounded. All inputs in the statements below have
-the random tape constantly `0`.
+output at the end is `out`. Real registers are not bounded, so a program using them is not a
+word-RAM program: `Instr.isReal` marks the instructions that read, write or compare reals, and
+`Program.IsWord prog` says that `prog` contains none of them. The statements below require it of
+every program. All inputs in the statements below have the random tape constantly `0`.
 
 **The arithmetic model (`WordRAM.Algebraic`).** `Counted α` is the writer monad over
 `OpCount = (adds, muls)`: a value together with the number of additive operations (additions,
@@ -53,10 +56,10 @@ definitions are part of the statements.
 keeps the initial vertex and permutes the darts leaving each vertex in a single cycle. The face
 permutation sends a dart `d` to `rot (d.symm)`; the faces are its cycles, and the face of a dart is
 the cycle containing it. The rotation system is *plane* (`IsPlane`) if `G` is connected and
-`|V| + |faces| = |E| + 2` (Euler's formula). That such rotation systems are exactly the
-combinatorial types of plane embeddings is classical and not formalized. Since faces are cycles of
-darts, the one-vertex graph has no faces and is not plane in this sense: every statement assuming
-`IsPlane` is about a connected graph with at least one edge.
+`|V| + |F| = |E| + 2` (Euler's formula, `F` the set of faces). That such rotation systems are
+exactly the combinatorial types of plane embeddings is classical and not formalized. Since faces are
+cycles of darts, the one-vertex graph has no faces and is not plane in this sense: every statement
+assuming `IsPlane` is about a connected graph with at least one edge.
 
 ### Planar separators and nested dissection (`PlanarSeparatorChallenge.lean`)
 
@@ -114,7 +117,7 @@ one subtraction per updated entry). `square G` joins distinct vertices at distan
   `12 T (T + T)² n √n = 48 T³ n √n` operations.
 * `PlanarSeparator.square_nested_dissection`: the same for `square G` of a plane graph `G` of
   maximum degree at most `Δ`, with `T = 40 (1062 (Δ + 1)² + 1)`.
-* `PlanarSeparator.separator_machine`: there is one program such that for every plane rotation
+* `PlanarSeparator.separator_machine`: there is one word program such that for every plane rotation
   system `R` of a graph on `Fin n` with `m` darts, natural vertex weights `w`, every numbering `di`
   of the darts in which darts leaving lower vertices have lower numbers, and every
   `W ≥ 16m + 12n + 3 Σ w + 22`, the program run on `sepInput R w di` halts within
@@ -128,16 +131,16 @@ one subtraction per updated entry). `square G` joins distinct vertices at distan
 ## Libraries
 
 Each library root module (`WordRAM.lean`, …) imports the modules of the library present here. The
-libraries contain exactly the modules needed by the Solution (59 modules).
+libraries contain exactly the modules needed by the Solution (60 modules).
 
 | Library | Modules | Content |
 |---|---|---|
-| `WordRAM` | 12 | the machine, structured programs and their compilation, the counted-operation model |
+| `WordRAM` | 13 | the machine, structured programs and their compilation, the counted-operation model |
 | `Kasteleyn` | 3 | rotation systems and faces |
 | `NestedDissection` | 9 | separator trees, fill, sparse elimination |
 | `PlanarSeparator` | 35 | the planar separator theorem, separator trees, the separator program |
 
-`Audit.lean` prints the axioms of the 8 compared theorems and of 36 further theorems of the
+`Audit.lean` prints the axioms of the 8 compared theorems and of 39 further theorems of the
 libraries.
 
 ## Checking

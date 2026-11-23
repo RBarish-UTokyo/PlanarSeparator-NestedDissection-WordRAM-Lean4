@@ -37,13 +37,14 @@ project:
     negation, multiplication and inversion of the explicit algorithm; the
     inverse is Lean's totalized field inverse (0^(-1) = 0), so these steps are
     Gaussian elimination without pivoting when the pivots are nonzero and leave
-    the matrix unchanged at a zero pivot; (8) one fixed program for an explicit
-    word RAM (unit cost per instruction, natural registers and memory cells
-    bounded by W along the run) prints, for a plane graph with n vertices, m
-    darts and natural vertex weights, a separator of at most 6 sqrt(n) + 3
-    vertices whose two parts each weigh at most 2/3 of the total, within 320m +
-    191n + 403 steps for word bounds at least 16m + 12n + 3 (total weight) + 22.
-    The proofs use only the axioms propext, Classical.choice and Quot.sound.
+    the matrix unchanged at a zero pivot; (8) one fixed word program (no real
+    instruction) for an explicit word RAM (unit cost per instruction, natural
+    registers and memory cells bounded by W along the run) prints, for a plane
+    graph with n vertices, m darts and natural vertex weights, a separator of at
+    most 6 sqrt(n) + 3 vertices whose two parts each weigh at most 2/3 of the
+    total, within 320m + 191n + 403 steps for word bounds at least 16m + 12n + 3
+    (total weight) + 22. The proofs use only the axioms propext,
+    Classical.choice and Quot.sound.
   authors:
     - "Robert D. Barish"
   license: "Apache-2.0"
@@ -193,9 +194,11 @@ fidelity:
     pattern in this totalized sense. (5) The filled graph is given to the
     algorithm as a hypothesis H = fill ...; computing it is not charged. (6) The
     machine statement is about one explicit machine (unit cost per instruction,
-    natural words bounded by W along the run) and a fixed input encoding; the
-    program is existentially quantified. The separator program requires the
-    darts to be numbered so that the darts leaving lower vertices come first.
+    natural words bounded by W along the run), a word program
+    (WordRAM.Program.IsWord: no real instruction, checked by the kernel on the
+    compiled code) and a fixed input encoding; the program is existentially
+    quantified. The separator program requires the darts to be numbered so that
+    the darts leaving lower vertices come first.
 
 review:
   status: "unreviewed"

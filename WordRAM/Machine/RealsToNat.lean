@@ -54,12 +54,6 @@ set_option linter.unusedSimpArgs false
 
 namespace WordRAM
 
-/-- A real instruction: one that reads or writes a real register or real memory cell. -/
-def Instr.isReal : Instr → Bool
-  | .constR .. | .copyR .. | .addR .. | .subR .. | .mulR .. | .divR .. | .loadR .. | .storeR ..
-  | .brLtR .. => true
-  | _ => false
-
 /-- Not a real division. -/
 def Instr.noDivR : Instr → Bool
   | .divR .. => false

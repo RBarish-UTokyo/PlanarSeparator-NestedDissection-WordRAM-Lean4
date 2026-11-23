@@ -17,20 +17,20 @@ successor of `d.symm` in the rotation at `v`. If `rot` lists the darts at each v
 counterclockwise, the face lies on the right of each of its darts, so that the boundary of every
 bounded face is traversed clockwise.
 
-Every embedding of a connected graph in an oriented closed surface determines a rotation system
-(the counterclockwise order of the edges at each vertex), and conversely every rotation system of
-a connected graph is induced by an embedding in an oriented surface, unique up to homeomorphism,
-whose faces are the cycles of `faceNext`. The surface is the sphere exactly when Euler's formula
-`V - E + F = 2` holds. A rotation system of a connected graph satisfying Euler's formula is
-therefore the combinatorial form of an embedding of the graph in the plane; this is the
-definition of a plane graph used here (`Kasteleyn.RotationSystem.IsPlane`).
+Every embedding of a connected graph in an oriented closed surface determines a rotation system (the
+counterclockwise order of the edges at each vertex), and conversely every rotation system of a
+connected graph is induced by an embedding in an oriented surface, unique up to homeomorphism, whose
+faces are the cycles of `faceNext`. The surface is the sphere exactly when Euler's formula
+`|V| + |F| = |E| + 2` holds, `F` the set of faces. A rotation system of a connected graph satisfying
+Euler's formula is therefore the combinatorial form of an embedding of the graph in the plane; this
+is the definition of a plane graph used here (`Kasteleyn.RotationSystem.IsPlane`).
 
 ## Main definitions (in `Kasteleyn/Spec.lean`)
 
 * `Kasteleyn.RotationSystem G`: a rotation system on `G`.
 * `Kasteleyn.RotationSystem.faceNext`, `Kasteleyn.RotationSystem.Face`,
   `Kasteleyn.RotationSystem.face`: the face permutation, the type of faces, the face of a dart.
-* `Kasteleyn.RotationSystem.IsPlane`: `G` is connected and `V - E + F = 2`.
+* `Kasteleyn.RotationSystem.IsPlane`: `G` is connected and `|V| + |F| = |E| + 2`.
 
 ## Main results
 
